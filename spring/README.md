@@ -153,3 +153,97 @@ This is useful for adding proxying or custom wrappers to beans.
 
    Here’s a real-world example demonstrating the entire lifecycle:
 [JAVA CODE](SpringContainer.java)
+
+### Lazy Loading vs Eager Loading in Spring
+
+#### 1. Lazy Loading
+
+   Lazy loading means that a bean is created and initialized only when it is first requested by the application. This can improve application startup time, as only necessary beans are loaded.
+
+Key Points:
+Bean is created on demand, i.e., when the getBean() method is called or it’s injected for the first time.
+Suitable for beans that are not immediately required at application startup.
+Reduces memory usage at startup, as fewer beans are loaded.
+Beans are initialized later, which may introduce a slight delay when they are first accessed.
+
+How to Enable Lazy Loading:
+Use the `@Lazy` annotation in Spring.
+
+Example: [JAVA CODE](LazyLoading.java)
+
+**Spring Boot Configuration:**
+You can globally enable lazy initialization in Spring Boot by adding the property in application.properties:
+
+`spring.main.lazy-initialization=true`
+
+#### 2. Eager Loading
+
+   Eager loading means that a bean is created and initialized as soon as the Spring context is started, regardless of whether the bean is actually used. This is the default behavior in Spring.
+
+Key Points:
+Bean is created at the time of container startup.
+Suitable for beans that are required immediately or frequently during the application’s execution.
+Increases memory usage at startup because all required beans are initialized early.
+Ensures all dependencies are resolved during startup, avoiding runtime surprises.
+
+### Scopes
+In Spring, scopes define the lifecycle of a bean and determine how and when a bean is created, as well as how it is shared within the Spring application.
+
+#### 1. Singleton Scope (Default)
+
+   In singleton scope, Spring creates a single instance of the bean, and this instance is shared across the entire Spring container. This is the default scope if no scope is specified.
+
+Only one instance of the bean is created per Spring container.
+The same instance is returned for every request to the bean.
+
+Example: [JAVA CODE](scopes/Singlton.java)
+
+#### 2. Prototype Scope
+
+   In prototype scope, a new instance of the bean is created every time it is requested. The bean is not shared and is created afresh for each use.
+
+A new instance is created every time the bean is requested.
+Useful when different states or behavior are needed for each usage.
+
+**How to Define Prototype Scope**:
+Use the annotation with `@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)`.
+
+Example: [JAVA CODE](scopes/Prototype.java)
+
+#### 3. Request Scope (Web Applications)
+
+   In request scope, a new bean instance is created for each HTTP request and is shared within that request. Once the request is complete, the bean is discarded.
+
+
+A new instance is created per HTTP request.
+Typically used in web applications, ensuring that each HTTP request gets its own instance of the bean.
+
+Use the annotation with  `@Scope(WebApplicationContext.SCOPE_REQUEST)`.
+
+#### 4. Session Scope (Web Applications)
+
+   In session scope, a bean instance is created for each HTTP session. The bean is shared across the session and is discarded when the session expires.
+
+A new instance is created per HTTP session.
+Used when you want to store session-specific information in a bean.
+
+Use the annotation with `@Scope(WebApplicationContext.SCOPE_SESSION)`.
+
+#### 5. Application Scope (Web Applications)
+
+   In application scope, a bean is created per ServletContext and is shared across the entire application. This scope is similar to the singleton scope but is specific to web applications.
+
+A single instance is created per ServletContext.
+The bean is shared across the entire application for all requests and sessions.
+
+Use the annotation with `@Scope(WebApplicationContext.SCOPE_APPLICATION)`.
+
+#### 6. Global Session Scope (Portlets Only)
+
+   In global session scope, the bean is tied to a global HTTP session. This scope is used in portlet-based web applications where multiple portlets may share the same session.
+
+A new instance is created for each global HTTP session (specific to portlet-based applications).
+Typically used when multiple portlets need to share a session.
+
+Use the annotation with `@Scope(WebApplicationContext.SCOPE_GLOBAL_SESSION)`.
+
